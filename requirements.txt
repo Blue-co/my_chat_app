@@ -1,3 +1,14 @@
-git add requirements.txt
-git commit -m "Add requirements.txt for dependency management"
-git push origin main
+# requirements.txt
+
+Flask==3.0.3
+Flask-SocketIO==5.3.6
+eventlet==0.36.0
+python-engineio==4.9.1
+python-socketio==5.11.1
+gunicorn==22.0.0
+greenlet==3.0.3
+Werkzeug==3.0.3
+click==8.1.7
+itsdangerous==2.1.2
+Jinja2==3.1.4
+MarkupSafe==2.1.5
