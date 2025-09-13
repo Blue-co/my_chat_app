@@ -1,0 +1,28 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>푸링의 채팅방</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>푸링의 미니 채팅방</h1>
+        <div id="messages" class="messages">
+            <!-- 채팅 메시지가 여기에 추가됩니다 -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="usernameInput" placeholder="닉네임 (선택 사항)">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autofocus>
+            <button id="sendMessageButton">전송</button>
+        </div>
+    </div>
+
+    <!-- Socket.IO 클라이언트 라이브러리 로드 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <!-- 너의 JavaScript 파일 연결 -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
