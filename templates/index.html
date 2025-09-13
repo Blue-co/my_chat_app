@@ -1,28 +1,254 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>푸링의 채팅방</title>
+    <!-- 기본 스타일 (CSS 파일이 없어도 작동하도록) -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        h1 {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .message.status {
+            background: #e3f2fd;
+            color: #1976d2;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .username {
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 5px;
+        }
+        
+        .message-text {
+            word-wrap: break-word;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+        
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+        }
+        
+        #usernameInput {
+            width: 150px;
+            min-width: 100px;
+        }
+        
+        #messageInput {
+            flex: 1;
+        }
+        
+        #sendMessageButton {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        #sendMessageButton:hover {
+            background: #45a049;
+        }
+        
+        #sendMessageButton:active {
+            transform: scale(0.98);
+        }
+        
+        @media (max-width: 768px) {
+            .input-area {
+                flex-direction: column;
+            }
+            
+            #usernameInput {
+                width: 100%;
+            }
+            
+            .chat-container {
+                height: 90vh;
+            }
+        }
+    </style>
+    <!-- 외부 CSS 파일 (있다면 로드) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="chat-container">
-        <h1>푸링의 미니 채팅방</h1>
+        <h1>🐸 푸링의 미니 채팅방</h1>
         <div id="messages" class="messages">
             <!-- 채팅 메시지가 여기에 추가됩니다 -->
+            <div class="message status">
+                채팅방에 오신 것을 환영합니다! 🎉
+            </div>
         </div>
         <div class="input-area">
-            <input type="text" id="usernameInput" placeholder="닉네임 (선택 사항)">
-            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autofocus>
+            <input type="text" id="usernameInput" placeholder="닉네임 (선택)" maxlength="20">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autofocus maxlength="500">
             <button id="sendMessageButton">전송</button>
         </div>
     </div>
 
-    <!-- Socket.IO 클라이언트 라이브러리 로드 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-    <!-- 너의 JavaScript 파일 연결 -->
+    <!-- Socket.IO 클라이언트 라이브러리 - 호환되는 최신 버전 사용 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    
+    <!-- 기본 JavaScript (외부 파일이 없어도 작동하도록) -->
+    <script>
+        // Socket.IO 연결
+        const socket = io();
+        
+        // DOM 요소들
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const usernameInput = document.getElementById('usernameInput');
+        const sendButton = document.getElementById('sendMessageButton');
+        
+        // 메시지 전송 함수
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            const username = usernameInput.value.trim();
+            
+            if (message) {
+                // 서버로 메시지 전송
+                socket.emit('message', {
+                    message: message,
+                    username: username || `Guest-${Math.random().toString(36).substr(2, 4)}`,
+                    timestamp: new Date().toLocaleTimeString('ko-KR')
+                });
+                
+                // 입력 필드 클리어
+                messageInput.value = '';
+                messageInput.focus();
+            }
+        }
+        
+        // 메시지 화면에 표시
+        function displayMessage(data, isStatus = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isStatus ? 'message status' : 'message';
+            
+            if (isStatus) {
+                messageDiv.textContent = data.msg;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="username">${data.username}</div>
+                    <div class="message-text">${data.message}</div>
+                    ${data.timestamp ? `<div style="font-size: 0.8em; color: #888; margin-top: 5px;">${data.timestamp}</div>` : ''}
+                `;
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // 이벤트 리스너들
+        sendButton.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Socket.IO 이벤트 처리
+        socket.on('connect', function() {
+            console.log('서버에 연결되었습니다.');
+            displayMessage({msg: '서버에 연결되었습니다! 💚'}, true);
+        });
+        
+        socket.on('disconnect', function() {
+            console.log('서버와의 연결이 끊어졌습니다.');
+            displayMessage({msg: '서버와의 연결이 끊어졌습니다. 재연결을 시도합니다... 🔄'}, true);
+        });
+        
+        socket.on('response', function(data) {
+            displayMessage(data);
+        });
+        
+        socket.on('status', function(data) {
+            displayMessage(data, true);
+        });
+        
+        // 연결 오류 처리
+        socket.on('connect_error', function(error) {
+            console.error('연결 오류:', error);
+            displayMessage({msg: '연결에 실패했습니다. 다시 시도해주세요. ❌'}, true);
+        });
+        
+        // 페이지 로드 시 입력 필드에 포커스
+        window.addEventListener('load', function() {
+            messageInput.focus();
+        });
+    </script>
+    
+    <!-- 외부 JavaScript 파일 (있다면 로드) -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
