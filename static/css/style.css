@@ -1,0 +1,94 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+.chat-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 20px;
+}
+
+h1 {
+    background-color: #6200ea;
+    color: white;
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 1.5em;
+    text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 400px;
+    min-height: 150px;
+    border-bottom: 1px solid #eee;
+}
+
+.message-item {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.message-item strong {
+    color: #6200ea;
+}
+
+.input-area {
+    display: flex;
+    padding: 15px 20px;
+    gap: 10px;
+    background-color: #f7f7f7;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.input-area input[type="text"] {
+    flex-grow: 1;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.95em;
+}
+#usernameInput {
+    flex-grow: 0.5; /* 닉네임 입력창 크기 조정 */
+}
+
+.input-area button {
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.2s ease;
+}
+
+.input-area button:hover {
+    background-color: #3700b3;
+}
+
+.status-message {
+    font-style: italic;
+    color: #888;
+    text-align: center;
+    margin: 5px 0;
+    font-size: 0.85em;
+}
