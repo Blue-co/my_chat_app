@@ -1,1 +1,25 @@
+# .gitignore
 
+# 가상 환경 폴더
+venv/
+.env
+
+# Python 관련 파일
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+
+# OS 및 편집기 관련 파일
+.DS_Store
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Flask 관련 파일
+instance/
+
+# Render.com 같은 서비스에 배포 시 추가될 수 있는 파일들 (로컬에만 존재)
+.python-version
