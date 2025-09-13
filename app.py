@@ -1,11 +1,19 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
+import os
 
 # Flask 애플리케이션 초기화
 app = Flask(__name__)
-# 보안을 위한 SECRET_KEY! 꼭 너만의 랜덤 문자열로 바꿔줘. 배포할 때는 환경변수로 관리하는 게 더 좋아!
-app.config['SECRET_KEY'] = '너만의_아무도_모르는_비밀_키_넣어줘_진짜_중요함'
-socketio = SocketIO(app)
+
+# 보안을 위한 SECRET_KEY - 환경변수 우선, 없으면 기본값 사용
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-production-secret-key-change-this-in-production')
+
+# SocketIO 초기화 - 배포용 설정 추가
+socketio = SocketIO(
+    app, 
+    cors_allowed_origins="*",  # CORS 허용 (필요시 특정 도메인으로 제한)
+    async_mode='eventlet'      # eventlet 사용 명시
+)
 
 # 기본 웹 페이지 라우트
 @app.route('/')
@@ -16,27 +24,47 @@ def index():
 @socketio.on('connect')
 def handle_connect():
     print(f'클라이언트 연결됨: {request.sid}')
-    emit('status', {'msg': f'{request.sid}가 입장했어요.'}, broadcast=True)
+    emit('status', {'msg': f'{request.sid[:8]}이 입장했어요.'}, broadcast=True)
 
 # 클라이언트로부터 메시지를 받았을 때
 @socketio.on('message')
 def handle_message(data):
     print(f'수신 메시지 from {request.sid}: {data}')
+    
+    # 데이터 유효성 검사 추가
+    if not data or 'message' not in data:
+        return
+    
     # 받은 메시지를 모든 연결된 클라이언트에게 전송 (broadcast)
-    # 'response' 이벤트로 보낼 거야.
     emit('response', {
         'message': data['message'],
-        'username': data.get('username', f'Guest-{request.sid[:4]}') # 유저 이름 없으면 Guest-XXXX 로 표시
+        'username': data.get('username', f'Guest-{request.sid[:4]}'),  # 유저 이름 없으면 Guest-XXXX로 표시
+        'timestamp': data.get('timestamp', '')  # 타임스탬프 추가 (선택사항)
     }, broadcast=True)
 
 # 클라이언트 연결이 끊어졌을 때
 @socketio.on('disconnect')
 def handle_disconnect():
     print(f'클라이언트 연결 끊김: {request.sid}')
-    emit('status', {'msg': f'{request.sid}가 퇴장했어요.'}, broadcast=True)
+    emit('status', {'msg': f'{request.sid[:8]}이 퇴장했어요.'}, broadcast=True)
+
+# 에러 핸들링 추가
+@socketio.on_error_default
+def default_error_handler(e):
+    print(f'SocketIO 에러: {e}')
 
 # 앱 실행
 if __name__ == '__main__':
-    # debug=True는 개발 시에만 사용! 배포 시에는 반드시 꺼야 해.
-    # socketio.run은 eventlet 웹 서버를 사용해.
-    socketio.run(app, debug=True, port=5000)
+    # 배포용 설정: 환경변수에서 PORT 가져오기
+    port = int(os.environ.get('PORT', 5000))
+    
+    # 개발/배포 환경 구분
+    debug_mode = os.environ.get('FLASK_ENV') == 'development'
+    
+    # socketio.run으로 실행 - 배포용 설정
+    socketio.run(
+        app, 
+        host='0.0.0.0',        # 모든 IP에서 접근 가능 (배포 필수)
+        port=port,             # 환경변수 PORT 사용
+        debug=debug_mode       # 개발 환경에서만 디버그 모드
+    )
