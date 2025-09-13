@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-production-secret-
 socketio = SocketIO(
     app, 
     cors_allowed_origins="*",  # CORS 허용 (필요시 특정 도메인으로 제한)
-    async_mode='eventlet'      # eventlet 사용 명시
+    async_mode='threading'      # threading 사용 명시
 )
 
 # 기본 웹 페이지 라우트
