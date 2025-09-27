@@ -1,8 +1,16 @@
+// DOM이 완전히 로드된 후에만 실행
 document.addEventListener('DOMContentLoaded', () => {
-    // Socket.IO 클라이언트 연결 - 프로덕션 환경 호환 개선
-    // 현재 위치에서 자동으로 서버 주소 감지
+    // 중복 실행 방지
+    if (window.chatAppInitialized) {
+        console.log('채팅앱이 이미 초기화되었습니다.');
+        return;
+    }
+    window.chatAppInitialized = true;
+    
+    console.log('채팅앱 초기화 중...');
+    
+    // Socket.IO 클라이언트 연결 - 프로덕션 환경 호환
     const socket = io({
-        // 재연결 설정
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
@@ -16,6 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('messageInput');
     const usernameInput = document.getElementById('usernameInput');
     const sendMessageButton = document.getElementById('sendMessageButton');
+    const connectionStatus = document.getElementById('connectionStatus');
+    
+    // 현재 사용자 정보 저장
+    let currentUser = {
+        nickname: '',
+        isNicknameSet: false
+    };
+    
+    // 연결 상태 업데이트 함수
+    function updateConnectionStatus(status) {
+        if (connectionStatus) {
+            connectionStatus.className = `connection-status ${status}`;
+        }
+    }
     
     // 메시지 표시 함수 개선
     function displayMessage(data, isStatus = false) {
@@ -53,14 +75,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // HTML 이스케이프 함수 (XSS 방지)
     function escapeHtml(text) {
         const div = document.createElement('div');
-        div.textContent = text;
+        div.textContent = text || '';
         return div.innerHTML;
+    }
+    
+    // 닉네임 유효성 검사 및 설정
+    function setUserNickname() {
+        const inputNickname = usernameInput.value.trim();
+        
+        if (inputNickname && inputNickname.length > 0) {
+            // 닉네임 길이 제한
+            currentUser.nickname = inputNickname.length > 20 ? inputNickname.substring(0, 20) : inputNickname;
+            currentUser.isNicknameSet = true;
+            
+            // 닉네임 설정 확인 메시지
+            console.log('닉네임 설정:', currentUser.nickname);
+            
+            // 닉네임 입력창 스타일 변경 (설정됨을 표시)
+            usernameInput.style.backgroundColor = '#e8f5e8';
+            usernameInput.title = `현재 닉네임: ${currentUser.nickname}`;
+        } else {
+            // 닉네임이 비어있으면 랜덤 생성
+            currentUser.nickname = `푸링${Math.random().toString(36).substr(2, 4)}`;
+            currentUser.isNicknameSet = false;
+            
+            usernameInput.style.backgroundColor = '';
+            usernameInput.title = '';
+        }
+        
+        return currentUser.nickname;
     }
     
     // 메시지 전송 함수 개선
     function sendMessage() {
         const message = messageInput.value.trim();
-        const username = usernameInput.value.trim();
         
         // 메시지 유효성 검사
         if (!message) {
@@ -73,19 +121,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // 닉네임 길이 제한
-        const finalUsername = username.length > 20 ? username.substring(0, 20) : username;
+        // 닉네임 설정 (메시지 전송 시마다 확인)
+        const finalUsername = setUserNickname();
         
         // 서버에 메시지 전송
-        socket.emit('message', {
+        const messageData = {
             message: message,
-            username: finalUsername || `Guest-${Math.random().toString(36).substr(2, 4)}`,
+            username: finalUsername,
             timestamp: new Date().toLocaleTimeString('ko-KR', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             })
-        });
+        };
+        
+        console.log('메시지 전송:', messageData);
+        socket.emit('message', messageData);
         
         // 입력창 초기화 및 포커스
         messageInput.value = '';
@@ -106,15 +157,22 @@ document.addEventListener('DOMContentLoaded', () => {
     usernameInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
+            setUserNickname(); // 닉네임 즉시 설정
             messageInput.focus();
         }
     });
     
-    // Socket.IO 이벤트 처리
+    // 닉네임 입력창에서 포커스 잃을 때 닉네임 설정
+    usernameInput.addEventListener('blur', function() {
+        setUserNickname();
+    });
+    
+    // Socket.IO 이벤트 처리 (중복 방지)
     
     // 연결 성공
     socket.on('connect', function() {
         console.log('서버에 연결되었습니다. ID:', socket.id);
+        updateConnectionStatus('');
         displayMessage({
             msg: '서버에 연결되었습니다! 채팅을 시작하세요. 🎉'
         }, true);
@@ -126,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 연결 해제
     socket.on('disconnect', function(reason) {
         console.log('서버와의 연결이 끊어졌습니다. 이유:', reason);
+        updateConnectionStatus('disconnected');
         displayMessage({
             msg: '서버와의 연결이 끊어졌습니다. 재연결을 시도합니다... 🔄'
         }, true);
@@ -134,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 재연결 시도
     socket.on('reconnect_attempt', function(attemptNumber) {
         console.log('재연결 시도 중...', attemptNumber);
+        updateConnectionStatus('connecting');
         displayMessage({
             msg: `재연결 시도 중... (${attemptNumber}번째)`
         }, true);
@@ -142,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 재연결 성공
     socket.on('reconnect', function() {
         console.log('서버에 재연결되었습니다.');
+        updateConnectionStatus('');
         displayMessage({
             msg: '서버에 다시 연결되었습니다! 💚'
         }, true);
@@ -153,18 +214,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 재연결 실패
     socket.on('reconnect_failed', function() {
         console.log('재연결에 실패했습니다.');
+        updateConnectionStatus('disconnected');
         displayMessage({
             msg: '서버 재연결에 실패했습니다. 페이지를 새로고침해주세요. ❌'
         }, true);
     });
     
-    // 메시지 수신
+    // 메시지 수신 (중복 방지를 위해 한 번만 등록)
     socket.on('response', function(data) {
+        console.log('메시지 수신:', data);
         displayMessage(data);
     });
     
     // 상태 메시지 수신 (입장/퇴장 등)
     socket.on('status', function(data) {
+        console.log('상태 메시지:', data);
         displayMessage(data, true);
     });
     
@@ -185,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 연결 오류 처리
     socket.on('connect_error', function(error) {
         console.error('연결 오류:', error);
+        updateConnectionStatus('disconnected');
         displayMessage({
             msg: '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요. ❌'
         }, true);
@@ -209,4 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 100);
         }
     });
+    
+    // 초기화 완료 메시지
+    console.log('채팅앱 초기화 완료!');
 });
