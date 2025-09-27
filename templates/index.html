@@ -32,6 +32,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
         
         h1 {
@@ -41,6 +42,35 @@
             text-align: center;
             margin: 0;
             font-size: 1.5em;
+            position: relative;
+        }
+        
+        .connection-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+            transition: all 0.3s ease;
+        }
+        
+        .connection-status.disconnected {
+            background: #f44336;
+            box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+        }
+        
+        .connection-status.connecting {
+            background: #ff9800;
+            box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
         .messages {
@@ -56,6 +86,18 @@
             border-radius: 10px;
             background: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: messageSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .message.status {
@@ -73,6 +115,13 @@
         
         .message-text {
             word-wrap: break-word;
+        }
+        
+        .timestamp {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 5px;
+            text-align: right;
         }
         
         .input-area {
@@ -112,7 +161,7 @@
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         
         #sendMessageButton:hover {
@@ -121,6 +170,11 @@
         
         #sendMessageButton:active {
             transform: scale(0.98);
+        }
+        
+        #sendMessageButton:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
         
         @media (max-width: 768px) {
@@ -142,7 +196,10 @@
 </head>
 <body>
     <div class="chat-container">
-        <h1>🐸 푸링의 미니 채팅방</h1>
+        <h1>
+            🐸 푸링의 미니 채팅방
+            <div id="connectionStatus" class="connection-status connecting"></div>
+        </h1>
         <div id="messages" class="messages">
             <!-- 채팅 메시지가 여기에 추가됩니다 -->
             <div class="message status">
@@ -162,13 +219,24 @@
     <!-- 기본 JavaScript (외부 파일이 없어도 작동하도록) -->
     <script>
         // Socket.IO 연결
-        const socket = io();
+        const socket = io({
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            maxReconnectionAttempts: 5
+        });
         
         // DOM 요소들
         const messagesDiv = document.getElementById('messages');
         const messageInput = document.getElementById('messageInput');
         const usernameInput = document.getElementById('usernameInput');
         const sendButton = document.getElementById('sendMessageButton');
+        const connectionStatus = document.getElementById('connectionStatus');
+        
+        // 연결 상태 업데이트 함수
+        function updateConnectionStatus(status) {
+            connectionStatus.className = `connection-status ${status}`;
+        }
         
         // 메시지 전송 함수
         function sendMessage() {
@@ -198,14 +266,26 @@
                 messageDiv.textContent = data.msg;
             } else {
                 messageDiv.innerHTML = `
-                    <div class="username">${data.username}</div>
-                    <div class="message-text">${data.message}</div>
-                    ${data.timestamp ? `<div style="font-size: 0.8em; color: #888; margin-top: 5px;">${data.timestamp}</div>` : ''}
+                    <div class="username">${escapeHtml(data.username)}</div>
+                    <div class="message-text">${escapeHtml(data.message)}</div>
+                    ${data.timestamp ? `<div class="timestamp">${data.timestamp}</div>` : ''}
                 `;
             }
             
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // 메시지 개수 제한 (성능 최적화)
+            if (messagesDiv.children.length > 100) {
+                messagesDiv.removeChild(messagesDiv.children[0]);
+            }
+        }
+        
+        // HTML 이스케이프 함수
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         // 이벤트 리스너들
@@ -220,12 +300,23 @@
         // Socket.IO 이벤트 처리
         socket.on('connect', function() {
             console.log('서버에 연결되었습니다.');
+            updateConnectionStatus('');
             displayMessage({msg: '서버에 연결되었습니다! 💚'}, true);
         });
         
         socket.on('disconnect', function() {
             console.log('서버와의 연결이 끊어졌습니다.');
+            updateConnectionStatus('disconnected');
             displayMessage({msg: '서버와의 연결이 끊어졌습니다. 재연결을 시도합니다... 🔄'}, true);
+        });
+        
+        socket.on('reconnect_attempt', function() {
+            updateConnectionStatus('connecting');
+        });
+        
+        socket.on('reconnect', function() {
+            updateConnectionStatus('');
+            displayMessage({msg: '서버에 다시 연결되었습니다! 💚'}, true);
         });
         
         socket.on('response', function(data) {
@@ -236,9 +327,9 @@
             displayMessage(data, true);
         });
         
-        // 연결 오류 처리
         socket.on('connect_error', function(error) {
             console.error('연결 오류:', error);
+            updateConnectionStatus('disconnected');
             displayMessage({msg: '연결에 실패했습니다. 다시 시도해주세요. ❌'}, true);
         });
         
