@@ -1,94 +1,337 @@
+/* 전체 스타일 초기화 및 기본 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5;
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
     color: #333;
+    padding: 10px;
 }
 
+/* 메인 채팅 컨테이너 */
 .chat-container {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 450px;
+    max-width: 600px;
+    height: 85vh;
+    max-height: 700px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin: 20px;
+    transition: all 0.3s ease;
 }
 
+/* 헤더 스타일 */
 h1 {
-    background-color: #6200ea;
+    background: linear-gradient(45deg, #4CAF50, #45a049);
     color: white;
-    padding: 15px 20px;
-    margin: 0;
-    font-size: 1.5em;
-    text-align: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.messages {
-    flex-grow: 1;
     padding: 20px;
+    text-align: center;
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #81C784, #66BB6A, #4CAF50);
+}
+
+/* 메시지 영역 */
+.messages {
+    flex: 1;
     overflow-y: auto;
-    max-height: 400px;
-    min-height: 150px;
-    border-bottom: 1px solid #eee;
+    padding: 20px;
+    background: #f8f9fa;
+    scroll-behavior: smooth;
 }
 
-.message-item {
-    margin-bottom: 10px;
+/* 스크롤바 커스터마이징 */
+.messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* 메시지 스타일 */
+.message {
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid #4CAF50;
+    animation: messageSlideIn 0.3s ease-out;
+    word-wrap: break-word;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 상태 메시지 (입장/퇴장 등) */
+.message.status {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    color: #1976d2;
+    font-style: italic;
+    text-align: center;
+    border-left: 4px solid #2196F3;
+    font-size: 0.9em;
+}
+
+/* 사용자명 스타일 */
+.username {
+    font-weight: bold;
+    color: #2196F3;
+    margin-bottom: 4px;
+    font-size: 0.95em;
+}
+
+/* 메시지 텍스트 */
+.message-text {
     line-height: 1.4;
+    color: #333;
 }
 
-.message-item strong {
-    color: #6200ea;
+/* 타임스탬프 */
+.timestamp {
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 6px;
+    text-align: right;
 }
 
+/* 입력 영역 */
 .input-area {
     display: flex;
-    padding: 15px 20px;
-    gap: 10px;
-    background-color: #f7f7f7;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    gap: 12px;
+    align-items: flex-end;
 }
 
-.input-area input[type="text"] {
-    flex-grow: 1;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 0.95em;
+/* 입력 필드 공통 스타일 */
+input[type="text"] {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: #fafafa;
 }
+
+input[type="text"]:focus {
+    border-color: #4CAF50;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* 닉네임 입력 필드 */
 #usernameInput {
-    flex-grow: 0.5; /* 닉네임 입력창 크기 조정 */
+    width: 140px;
+    min-width: 100px;
+    flex-shrink: 0;
 }
 
-.input-area button {
-    background-color: #6200ea;
+/* 메시지 입력 필드 */
+#messageInput {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 전송 버튼 */
+#sendMessageButton {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 25px;
     cursor: pointer;
-    font-size: 0.95em;
-    transition: background-color 0.2s ease;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    flex-shrink: 0;
 }
 
-.input-area button:hover {
-    background-color: #3700b3;
+#sendMessageButton:hover {
+    background: linear-gradient(45deg, #45a049, #388e3c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
 }
 
-.status-message {
-    font-style: italic;
-    color: #888;
-    text-align: center;
-    margin: 5px 0;
-    font-size: 0.85em;
+#sendMessageButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+#sendMessageButton:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 연결 상태 표시 */
+.connection-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+}
+
+.connection-status.disconnected {
+    background: #f44336;
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+}
+
+.connection-status.connecting {
+    background: #ff9800;
+    box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 모바일 반응형 디자인 */
+@media (max-width: 768px) {
+    body {
+        padding: 5px;
+    }
+    
+    .chat-container {
+        height: 95vh;
+        border-radius: 15px;
+    }
+    
+    h1 {
+        font-size: 1.2em;
+        padding: 15px;
+    }
+    
+    .input-area {
+        flex-direction: column;
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    #usernameInput {
+        width: 100%;
+    }
+    
+    .messages {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-container {
+        height: 100vh;
+        border-radius: 0;
+        max-height: none;
+    }
+    
+    h1 {
+        font-size: 1.1em;
+        padding: 12px;
+    }
+    
+    .input-area {
+        padding: 12px;
+    }
+    
+    .messages {
+        padding: 12px;
+    }
+    
+    .message {
+        padding: 10px 12px;
+        margin-bottom: 12px;
+    }
+}
+
+/* 다크모드 지원 (선택사항) */
+@media (prefers-color-scheme: dark) {
+    .chat-container {
+        background: rgba(30, 30, 30, 0.95);
+        color: #e0e0e0;
+    }
+    
+    .messages {
+        background: #1a1a1a;
+    }
+    
+    .message {
+        background: #2d2d2d;
+        color: #e0e0e0;
+    }
+    
+    .message.status {
+        background: linear-gradient(135deg, #1a237e, #283593);
+        color: #90caf9;
+    }
+    
+    input[type="text"] {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #555;
+    }
+    
+    input[type="text"]:focus {
+        background: #3d3d3d;
+        border-color: #4CAF50;
+    }
+    
+    .input-area {
+        background: #2d2d2d;
+        border-top-color: #555;
+    }
 }
