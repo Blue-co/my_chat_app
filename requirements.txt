@@ -1,30 +1,30 @@
-# Flask 웹 프레임워크
-Flask==2.3.7
+# Flask 웹 프레임워크 (안정적인 최신 버전)
+Flask==2.3.3
 
 # Flask-SocketIO 실시간 통신
 Flask-SocketIO==5.3.6
 
-# 비동기 웹서버 (eventlet)
-eventlet==0.35.2
+# 비동기 웹서버 (eventlet) - 호환성 검증된 버전
+eventlet==0.33.3
 
 # WSGI HTTP 서버
 gunicorn==21.2.0
 
-# Flask 의존성들 (호환성 보장)
+# Flask 핵심 의존성들 (호환성 보장)
 click==8.1.7
 itsdangerous==2.1.2
-Jinja2==3.1.4
-MarkupSafe==2.1.5
+Jinja2==3.1.2
+MarkupSafe==2.1.3
 Werkzeug==2.3.7
 
-# SocketIO 의존성들
+# SocketIO 의존성들 (안정적인 버전)
 python-engineio==4.7.1
 python-socketio==5.9.0
 
-# 기타 필요한 패키지들
+# 기타 필수 패키지들
 six==1.16.0
 greenlet==3.0.3
-dnspython==2.6.1
+dnspython==2.4.2
 
-# 추가 보안 및 성능 패키지들
+# 환경변수 관리 (선택사항)
 python-dotenv==1.0.1
