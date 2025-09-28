@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isStatus) {
             messageElement.classList.add('message', 'status');
             messageElement.innerHTML = `
-                <div style="text-align: center; font-style: italic; color: #666;">
+                <div class='users-object-num' style="text-align: center; font-style: italic; color: #666;">
                     ${escapeHtml(data.msg)}
                     ${data.user_count ? ` (현재 ${data.user_count}명 접속)` : ''}
                 </div>
@@ -74,6 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             const bubble = document.querySelector('.status');
             if (bubble) {
+                bubble.style.display = 'none';
+            }
+        }, 3000)
+        
+        setTimeout(() => {
+            const usersNum = document.querySelector('.users-object-num');
+            if (usersNum) {
                 bubble.style.display = 'none';
             }
         }, 3000)
