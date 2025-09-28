@@ -67,9 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 메시지 개수 제한 (성능 최적화)
         const messages = messagesDiv.children;
-        if (messages.length > 100) {
+        if (messages.length > 530) {
             messagesDiv.removeChild(messages[0]);
         }
+
+        
     }
     
     // HTML 이스케이프 함수 (XSS 방지)
@@ -117,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (message.length > 500) {
-            alert('메시지가 너무 깁니다. (최대 500자)');
+            alert('메시지가 너무 깁니다. (최대 1000자)');
             return;
         }
         
@@ -242,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('error', function(error) {
         console.error('소켓 에러:', error);
         displayMessage({
-            msg: error.msg || '알 수 없는 오류가 발생했습니다.'
+            msg: error.msg || '헉... 알 수 없는 오류!.'
         }, true);
     });
     
@@ -251,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('연결 오류:', error);
         updateConnectionStatus('disconnected');
         displayMessage({
-            msg: '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요. ❌'
+            msg: '서버 연결 안돼네ㅠㅠ. 잠시 후 다시 시도해보자!'
         }, true);
     });
     
