@@ -71,7 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
             messagesDiv.removeChild(messages[0]);
         }
 
-        
+        setTimeout(() => {
+            const bubble = document.getElementByClass('massge status');
+            if (bubble) {
+                bubble.style.display = 'none';
+            }
+        }, 3000)
     }
     
     // HTML 이스케이프 함수 (XSS 방지)
