@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         setTimeout(() => {
-            const bubble = document.querySelector('.message .status');
+            const bubble = document.querySelector('.status');
             if (bubble) {
                 bubble.style.display = 'none';
             }
