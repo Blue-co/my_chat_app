@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         setTimeout(() => {
-            const bubble = document.getElementByClass('massge');
+            const bubble = document.getElementByClassName('massge');
             if (bubble) {
                 bubble.style.display = 'none';
             }
