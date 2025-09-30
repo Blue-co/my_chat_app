@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     function displayStatus(status) {
-        const userNUm = document.createElement('div');
+        const userNum = document.createElement('div');
 
         userNum.innerText = (`유저 : ${date.user_count}명`);
     }
