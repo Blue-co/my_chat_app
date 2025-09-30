@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
             connectionStatus.className = `connection-status ${status}`;
         }
     }
+    function displayStatus(status) {
+        const userNUm = document.createElement('div');
+
+        userNum.innerText = (`유저 : ${date.user_count}명`);
+    }
     
     // 메시지 표시 함수 개선
     function displayMessage(data, isStatus = false) {
@@ -109,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             usernameInput.title = `현재 닉네임: ${currentUser.nickname}`;
         } else {
             // 닉네임이 비어있으면 랜덤 생성
-            currentUser.nickname = `푸링${Math.random().toString(36).substr(2, 4)}`;
+            currentUser.nickname = `user${Math.random().toString(36).substr(2, 4)}`;
             currentUser.isNicknameSet = false;
             
             usernameInput.style.backgroundColor = '';
