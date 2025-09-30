@@ -1,21 +1,7 @@
-/* 전체 스타일 초기화 및 기본 설정 */
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
-
-body {
-    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #333;
-    padding: 10px;
-}
-
 /* 메인 채팅 컨테이너 */
 .chat-container {
     background: rgba(255, 255, 255, 0.95);
