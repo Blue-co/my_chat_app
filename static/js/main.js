@@ -67,21 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 메시지 개수 제한 (성능 최적화)
         const messages = messagesDiv.children;
-        if (messages.length > 530) {
+        if (messages.length > 500) {
             messagesDiv.removeChild(messages[0]);
         }
 
         setTimeout(() => {
-            const bubble = document.querySelector('.status');
+            const bubble = document.querySelector('.message.status');
             if (bubble) {
                 bubble.style.display = 'none';
-            }
-        }, 3000)
-        
-        setTimeout(() => {
-            const statusM = document.querySelector('.messaga');
-            if (statusM) {
-                statusM.style.display = 'none';
             }
         }, 3000)
     }
