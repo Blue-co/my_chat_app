@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isStatus) {
             messageElement.classList.add('message', 'status');
             messageElement.innerHTML = `
-                <div class='users-object-num' style="text-align: center; font-style: italic; color: #666;">
+                <div class='usersObjectNum' style="text-align: center; font-style: italic; color: #666;">
                     ${escapeHtml(data.msg)}
                     ${data.user_count ? ` (현재 ${data.user_count}명 접속)` : ''}
                 </div>
@@ -78,12 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 3000)
         
-        // setTimeout(() => {
-        //     const usersNum = document.querySelector('.users-object-num');
-        //     if (usersNum) {
-        //         bubble.style.display = 'none';
-        //     }
-        // }, 3000)
+        setTimeout(() => {
+            const usersNum = document.querySelector('.usersObjectNum');
+            if (usersNum) {
+                bubble.style.display = 'none';
+            }
+        }, 3000)
     }
     
     // HTML 이스케이프 함수 (XSS 방지)
