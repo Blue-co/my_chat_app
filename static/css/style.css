@@ -236,7 +236,7 @@ input[type="text"]:focus {
     }
     
     #usernameInput {
-        width: 100%;
+        width: 70%;
     }
     
     .messages {
