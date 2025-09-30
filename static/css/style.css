@@ -225,15 +225,6 @@ input[type="text"]:focus {
 
 /* 모바일 반응형 디자인 */
 @media (max-width: 768px) {
-    body {
-        padding: 5px;
-    }
-    
-    .chat-container {
-        height: 95vh;
-        border-radius: 15px;
-    }
-    
     h1 {
         font-size: 1.2em;
         padding: 15px;
@@ -255,12 +246,6 @@ input[type="text"]:focus {
 }
 
 @media (max-width: 480px) {
-    .chat-container {
-        height: 100vh;
-        border-radius: 0;
-        max-height: none;
-    }
-    
     h1 {
         font-size: 1.1em;
         padding: 12px;
