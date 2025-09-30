@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Socket.IO 클라이언트 연결 - 프로덕션 환경 호환
     const socket = io({
         reconnection: true,
-        reconnectionDelay: 1000,
+        reconnectionDelay: 500,
         reconnectionDelayMax: 5000,
         maxReconnectionAttempts: 5,
         timeout: 20000,
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (message.length > 500) {
-            alert('메시지가 너무 깁니다. (최대 1000자)');
+            alert('메시지가 너무 깁니다. (최대 500자)');
             return;
         }
         
