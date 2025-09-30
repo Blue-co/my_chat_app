@@ -79,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000)
         
         setTimeout(() => {
-            const usersNum = document.querySelector('.usersObjectNum');
-            if (usersNum) {
-                bubble.style.display = 'none';
+            const statusM = document.querySelector('.messaga');
+            if (statusM) {
+                statusM.style.display = 'none';
             }
         }, 3000)
     }
