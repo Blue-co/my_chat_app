@@ -77,6 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 bubble.style.display = 'none';
             }
         }, 3000)
+        setTimeout(() => {
+            const usersN = document.querySelector('.usersObjectNum');
+            if (usersN) {
+                usersN.style.display = 'none';
+            }
+        }, 3000)
     }
     
     // HTML 이스케이프 함수 (XSS 방지)
