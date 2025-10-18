@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayStatus(status) {
         const userNum = document.createElement('div');
 
-        userNum.innerHTML = <div class='userNum'>(`유저 : ${date.user_count}명`)</div>;
+        userNum.innerHTML = `<div class='userNum'> `(유저 : ${date.user_count}명)` </div>`;
     }
     
     // 메시지 표시 함수 개선
@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 bubble.style.display = 'none';
             }
         }, 3000)
+        
         setTimeout(() => {
             const usersN = document.querySelector('.usersObjectNum');
             if (usersN) {
