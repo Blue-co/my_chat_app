@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     function displayStatus() {
-        const userNum = document.createElement('div');
+        const userNum = document.getElementById('div');
 
-        userNum.textContent = `(유저 : ${date.user_count}명)`;
+        userNum.innerHTMl = `<div class="userNum">(유저 : ${date.user_count}명)<div>`;
     }
     
     // 메시지 표시 함수 개선
