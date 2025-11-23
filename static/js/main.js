@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayStatus() {
         const userNum = document.createElement('div');
 
-        userNum.innerHTML = `<div class='userNum'> (유저 : ${date.user_count}명) </div>`;
+        userNum.innerText = `(유저 : ${date.user_count}명)`;
     }
     
     // 메시지 표시 함수 개선
