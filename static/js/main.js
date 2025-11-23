@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     function displayStatus() {
-        const userNum = document.getElementById('div');
+        const userNum = document.getElementById('UN');
 
         userNum.innerHTMl = `<div class="userNum">(유저 : ${date.user_count}명)<div>`;
     }
