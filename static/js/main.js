@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayStatus() {
         const userNum = document.getElementById('UN');
 
-        userNum.innerHTML = "허허, 안뇽하쉐여~" + `(유저 : ${date.user_count}명)`;
+        userNum.innerHTML = `유저 : ${date.user_count}명`;
     }
     
     // 메시지 표시 함수 개선
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             messageElement.innerHTML = `
                 <div class='usersObjectNum' style="text-align: center; font-style: italic; color: #666;">
                     ${escapeHtml(data.msg)}
-                    ${data.user_count ? ` (현0재 ${data.user_count}명 접속)` : ''}
+                    ${data.user_count ? ` (현재 ${data.user_count}명 접속)` : ''}
                 </div>
             `;
         } else {
