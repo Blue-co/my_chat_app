@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayStatus() {
         const userNum = document.getElementById('UN');
 
-        userNum.innerHTML = `(유저 : ${date.user_count}명)`;
+        userNum.innerHTML = "허허, 안뇽하쉐여~" + `(유저 : ${date.user_count}명)`;
     }
     
     // 메시지 표시 함수 개선
