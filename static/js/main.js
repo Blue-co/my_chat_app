@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             messageElement.innerHTML = `
                 <div class='usersObjectNum' style="text-align: center; font-style: italic; color: #666;">
                     ${escapeHtml(data.msg)}
-                    ${data.user_count ? ` (현재 ${data.user_count}명 접속)` : ''}
+                    ${data.user_count ? ` (현0재 ${data.user_count}명 접속)` : ''}
                 </div>
             `;
         } else {
