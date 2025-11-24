@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             connectionStatus.className = `connection-status ${status}`;
         }
     }
-    function displayStatus() {
+    function displayStatus(date) {
         const userNum = document.getElementById('UN');
 
         userNum.innerHTML = `유저 : ${date.user_count}명`;
