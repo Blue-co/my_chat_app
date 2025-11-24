@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function displayStatus(date) {
         const userNum = document.getElementById('UN');
+        userNum.innerHTML = `${date.user_count}명 접속`;
     }
     
     // 메시지 표시 함수 개선
