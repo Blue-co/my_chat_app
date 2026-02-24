@@ -28,3 +28,7 @@ dnspython==2.4.2
 
 # 환경변수 관리 (선택사항)
 python-dotenv==1.0.1
+
+#gemini 조언으로 추가된 줄(2) -By blueco
+ipython==8.31.0
+ipykernel==6.29.5
